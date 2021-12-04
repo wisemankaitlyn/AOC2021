@@ -11,7 +11,7 @@ using namespace std;
 void main()
 {
 	ifstream in;
-	in.open("testinput2.txt");
+	in.open("input.txt");
 	const int numBits = 12;
 	const int numNums = 1000;
 
@@ -26,7 +26,7 @@ void main()
 
 	int colOnes[numBits] = { 0 };
 
-	while (!in.eof())
+	while (numIndex < numNums)
 	{
 		in >> temp;
 		if (temp == '1' || temp == '0')
@@ -47,6 +47,16 @@ void main()
 		}
 	}
 	in.close();
+
+	for (int i = 0; i < numBits; i++)
+	{
+		cout << numbers[i][0];
+	}
+	cout << endl;
+	for (int i = 0; i < numBits; i++)
+	{
+		cout << numbers[i][1];
+	}
 
 	for (int i = 0; i < numBits; i++)
 	{
@@ -75,36 +85,30 @@ void main()
 
 	for (int bitInd = 0; bitInd < numBits; bitInd++)
 	{
-		int numOnesInRound = 0;
+		cout << bitInd << ", " << oxygenGeneratorRating.size() << endl;
+		vector<int> onesInRound;
+		vector<int> zerosInRound;
 		// figure out most common bit in column
-		for (auto index : oxygenGeneratorRating)
+		for (int index : oxygenGeneratorRating)
 		{
-			if (numbers[bitInd][index] == '1') numOnesInRound++;
+			if (numbers[bitInd][index] == '1')
+				onesInRound.push_back(index);
+			else if (numbers[bitInd][index] == '0')
+				zerosInRound.push_back(index);
 		}
 
-		// store indexes of values that don't match that most common bit
-		vector<int> toRemove;
+		// throw out the values that don't match the most common bit
 
-		if (numOnesInRound >= oxygenGeneratorRating.size()/2.0)
+		if (onesInRound.size() != 0 && zerosInRound.size() != 0)
 		{
-			for (auto index : oxygenGeneratorRating)
-			{
-				if (numbers[bitInd][index] == '0') toRemove.push_back(index);
-			}
-		}
-		else
-		{
-			for (auto index : oxygenGeneratorRating)
-			{
-				if (numbers[bitInd][index] == '1') toRemove.push_back(index);
-			}
+			if (onesInRound.size() >= zerosInRound.size()) 
+				oxygenGeneratorRating = onesInRound;
+			else 
+				oxygenGeneratorRating = zerosInRound;
 		}
 
-		// remove the stored indexes from the vector
-		for (auto index : toRemove)
-		{
-			oxygenGeneratorRating.erase(find(oxygenGeneratorRating.begin(), oxygenGeneratorRating.end(), index));
-		}
+		cout << "     NumZeros: " << zerosInRound.size() << endl;
+		cout << "     NumOnes : " << onesInRound.size() << endl;
 
 		// break out if size == 1
 		if (oxygenGeneratorRating.size() == 1) break;
@@ -116,6 +120,7 @@ void main()
 		if (numbers[i][oxygenGeneratorRating.at(0)] == '1')
 			OGR += pow(2, numBits - i - 1);
 	}
+	cout << "OGR: " << OGR << endl;
 
 	// co2
 	for (int bitInd = 0; bitInd < numBits; bitInd++)
